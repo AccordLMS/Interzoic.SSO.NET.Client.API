@@ -57,7 +57,7 @@ Partial Public Class Connection
     End Sub
 
     Private Sub ConfigureRequest(ByRef request As HttpRequestMessage, ByVal credentials As Credentials, ByVal verb As String, ByVal verbOverride As String, ByVal uriTemplate As String, ByVal content As HttpContent)
-
+        System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12
         VerifyPropertiesAreSet(credentials)
 
         If Not request Is Nothing Then
