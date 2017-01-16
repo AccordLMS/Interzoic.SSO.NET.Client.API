@@ -75,16 +75,17 @@ Partial Public Class Connection
     ''' <param name="portalid">The target portal.</param>
     ''' <param name="profileName">The target profileName.</param>
     ''' <param name="length">The target length.</param>
+    ''' <param name="profileCategory">The target profileCategory.</param>
     ''' <returns>The HTTP status code of the operation.</returns>
     ''' <remarks></remarks>
-    Public Function ProfilePropertyAddWithType(ByVal portalId As Integer, ByVal profileName As String, ByVal profileType As String, ByVal length As String) As HttpStatusCode
+    Public Function ProfilePropertyAddWithType(ByVal portalId As Integer, ByVal profileName As String, ByVal profileType As String, ByVal length As String, ByVal profileCategory As String) As HttpStatusCode
         Dim statusCode As HttpStatusCode = HttpStatusCode.InternalServerError
 
         VerifyPropertiesAreSet(Me.Credentials)
         Try
 
             Using request As New HttpRequestMessage()
-                ConfigureRequest(request, Credentials, "POST", String.Format("portal/{0}/profileName/{1}/profileType/{2}/length/{3}", portalId, profileName, profileType, length))
+                ConfigureRequest(request, Credentials, "POST", String.Format("portal/{0}/profileName/{1}/profileType/{2}/length/{3}/profileCategory/{4}", portalId, profileName, profileType, length, profileCategory))
                 Using response As HttpResponseMessage = Client.Send(request)
                     statusCode = response.StatusCode
                 End Using
@@ -102,16 +103,17 @@ Partial Public Class Connection
     ''' <param name="portalid">The target portal.</param>
     ''' <param name="profileName">The target profileName.</param>
     ''' <param name="length">The target length.</param>
+    ''' <param name="profileCategory">The target profileCategory.</param>
     ''' <returns>The HTTP status code of the operation.</returns>
     ''' <remarks></remarks>
-    Public Function ProfilePropertyAdd(ByVal portalId As Integer, ByVal profileName As String, ByVal length As String) As HttpStatusCode
+    Public Function ProfilePropertyAdd(ByVal portalId As Integer, ByVal profileName As String, ByVal length As String, ByVal profileCategory As String) As HttpStatusCode
         Dim statusCode As HttpStatusCode = HttpStatusCode.InternalServerError
 
         VerifyPropertiesAreSet(Me.Credentials)
         Try
 
             Using request As New HttpRequestMessage()
-                ConfigureRequest(request, Credentials, "POST", String.Format("portal/{0}/profileName/{1}/length/{2}", portalId, profileName, length))
+                ConfigureRequest(request, Credentials, "POST", String.Format("portal/{0}/profileName/{1}/length/{2}/profileCategory/{3}", portalId, profileName, length, profileCategory))
                 Using response As HttpResponseMessage = Client.Send(request)
                     statusCode = response.StatusCode
                 End Using
