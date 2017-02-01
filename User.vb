@@ -138,10 +138,10 @@ Partial Public Class Connection
     ''' </summary>
     ''' <param name="portalid">The target user's portal.</param>
     ''' <param name="username">The target user's username.</param>
-    ''' <returns>The HTTP status code of the operation.</returns>
-    ''' <remarks></remarks>
-    Public Function UserUpdate(ByVal portalid As Integer, ByVal username As String, ByVal userInfoContract As UserInfoDataContract) As HttpStatusCode
-        Return UserUpdate(Me.Credentials, portalid, username, userInfoContract)
+    ''' <returns>The user Id.</returns>
+    ''' <remarks>statusCode is also a return value for this method.</remarks>
+    Public Function UserUpdate(ByVal portalid As Integer, ByVal username As String, ByVal userInfoContract As UserInfoDataContract, ByRef statusCode As HttpStatusCode) As Integer
+        Return UserUpdate(Me.Credentials, portalid, username, userInfoContract, statusCode)
     End Function
 
     ''' <summary>
@@ -150,13 +150,14 @@ Partial Public Class Connection
     ''' <param name="credentials">The user's credentials to make the connection to the SSO server.</param>
     ''' <param name="portalid">The target user's portal.</param>
     ''' <param name="username">The target user's username.</param>
-    ''' <returns>The HTTP status code of the operation.</returns>
-    ''' <remarks></remarks>
-    Public Function UserUpdate(ByVal credentials As Credentials, ByVal portalid As Integer, ByVal username As String, ByVal userInfoContract As UserInfoDataContract) As HttpStatusCode
+    ''' <returns>The user Id.</returns>
+    ''' <remarks>statusCode is also a return value for this method.</remarks>
+    Public Function UserUpdate(ByVal credentials As Credentials, ByVal portalid As Integer, ByVal username As String, ByVal userInfoContract As UserInfoDataContract, ByRef statusCode As HttpStatusCode) As Integer
         ' Create/Update the user
-        Dim statusCode As HttpStatusCode = HttpStatusCode.InternalServerError
+        statusCode = HttpStatusCode.InternalServerError
 
         VerifyPropertiesAreSet(credentials)
+        Dim userId As Integer = -1
 
         Try
 
@@ -166,11 +167,16 @@ Partial Public Class Connection
                 ConfigureRequest(request, credentials, "POST", String.Format("portal/{0}/users/{1}", portalid, username), content)
 
                 Using response As HttpResponseMessage = Client.Send(request)
+                    ' Get The HTTP Status Code
                     statusCode = response.StatusCode
+                    If statusCode = HttpStatusCode.OK Then
+                        ' Get the data from the response body
+                        userId = Integer.Parse(response.Content.ReadAsXElement().Value)
+                    End If
                 End Using
             End Using
 
-            Return statusCode
+            Return userId
 
         Catch ex As Exception
             Throw New SSOClientException("Error processing the UserUpdate request: " & ex.Message, ex)
