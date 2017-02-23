@@ -98,7 +98,6 @@ Partial Public Class Connection
         Return UserDeleteInternal(credentials, portalid, username, False)
     End Function
 
-
     Private Function UserDeleteInternal(ByVal cred As Credentials, ByVal portalid As Integer, ByVal username As String, ByVal isHardDelete As Boolean) As HttpStatusCode
         Dim statusCode As HttpStatusCode = HttpStatusCode.InternalServerError
 
@@ -130,6 +129,102 @@ Partial Public Class Connection
 
         Catch ex As Exception
             Throw New SSOClientException(String.Format("Error processing the {0} request: {1}", cmd, ex.Message), ex)
+        End Try
+    End Function
+
+
+
+    ''' <summary>
+    ''' Send a Reset Password email for a DNN user.
+    ''' </summary>
+    ''' <param name="portalid">The target user's portal.</param>
+    ''' <param name="username">The target user's username.</param>
+    ''' <returns>The HTTP status code of the operation.</returns>
+    ''' <remarks>Typically you will call this method by means of the X-HTTP-Method-Override request header.</remarks>
+    Public Function UserResetPassword(ByVal portalid As Integer, ByVal username As String) As HttpStatusCode
+        Dim statusCode As HttpStatusCode = HttpStatusCode.InternalServerError
+
+        VerifyPropertiesAreSet(Credentials)
+
+        Try
+
+            Using request As New HttpRequestMessage()
+
+                ConfigureRequest(request, Credentials, "POST", String.Format("portal/{0}/users/{1}/resetpassword", portalid, username))
+
+                Using response As HttpResponseMessage = Client.Send(request)
+                    statusCode = response.StatusCode
+                End Using
+
+            End Using
+
+            Return statusCode
+
+        Catch ex As Exception
+            Throw New SSOClientException(String.Format("Error processing UserResetPassword request.", ex.Message), ex)
+        End Try
+    End Function
+
+
+    ''' <summary>
+    ''' Authorize User for a DNN user.
+    ''' </summary>
+    ''' <param name="portalid">The target user's portal.</param>
+    ''' <param name="username">The target user's username.</param>
+    ''' <returns>The HTTP status code of the operation.</returns>
+    ''' <remarks>Typically you will call this method by means of the X-HTTP-Method-Override request header.</remarks>
+    Public Function UserAuthorize(ByVal portalid As Integer, ByVal username As String) As HttpStatusCode
+        Dim statusCode As HttpStatusCode = HttpStatusCode.InternalServerError
+
+        VerifyPropertiesAreSet(Credentials)
+
+        Try
+
+            Using request As New HttpRequestMessage()
+
+                ConfigureRequest(request, Credentials, "POST", String.Format("portal/{0}/users/{1}/authorize", portalid, username))
+
+                Using response As HttpResponseMessage = Client.Send(request)
+                    statusCode = response.StatusCode
+                End Using
+
+            End Using
+
+            Return statusCode
+
+        Catch ex As Exception
+            Throw New SSOClientException(String.Format("Error processing UserAuthorize request.", ex.Message), ex)
+        End Try
+    End Function
+
+    ''' <summary>
+    ''' Authorize User for a DNN user.
+    ''' </summary>
+    ''' <param name="portalid">The target user's portal.</param>
+    ''' <param name="username">The target user's username.</param>
+    ''' <returns>The HTTP status code of the operation.</returns>
+    ''' <remarks>Typically you will call this method by means of the X-HTTP-Method-Override request header.</remarks>
+    Public Function UserUnAuthorize(ByVal portalid As Integer, ByVal username As String) As HttpStatusCode
+        Dim statusCode As HttpStatusCode = HttpStatusCode.InternalServerError
+
+        VerifyPropertiesAreSet(Credentials)
+
+        Try
+
+            Using request As New HttpRequestMessage()
+
+                ConfigureRequest(request, Credentials, "POST", String.Format("portal/{0}/users/{1}/unauthorize", portalid, username))
+
+                Using response As HttpResponseMessage = Client.Send(request)
+                    statusCode = response.StatusCode
+                End Using
+
+            End Using
+
+            Return statusCode
+
+        Catch ex As Exception
+            Throw New SSOClientException(String.Format("Error processing UserAuthorize request.", ex.Message), ex)
         End Try
     End Function
 
